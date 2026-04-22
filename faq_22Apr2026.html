@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course FAQ</title>
+    <style>
+        /* Moodle-friendly Clean UI */
+        :root {
+            --primary-color: #0f6cbf;
+            --bg-color: #f8f9fa;
+            --text-main: #333;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: transparent; 
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(15, 108, 191, 0.1);
+        }
+
+        .faq-item {
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+        }
+
+        .faq-question {
+            width: 100%;
+            text-align: left;
+            background: none;
+            border: none;
+            padding: 18px 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary-color);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-question:hover {
+            color: #0a4b85;
+        }
+
+        /* Biểu tượng +/- */
+        .faq-question::after {
+            content: '+';
+            font-size: 20px;
+            color: var(--text-muted);
+            transition: transform 0.3s;
+            margin-left: 10px;
+        }
+
+        .faq-item.active .faq-question::after {
+            content: '−';
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            color: #444;
+            line-height: 1.6;
+        }
+
+        .faq-answer-inner {
+            padding-bottom: 18px;
+        }
+
+        .lesson-badge {
+            font-size: 11px;
+            background: #e9ecef;
+            color: var(--text-muted);
+            padding: 2px 8px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            display: inline-block;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="faq-container">
+        <input type="text" id="searchInput" class="search-box" placeholder="Search questions... (e.g., cheer, environment)">
+        <div id="faqList">
+            </div>
+    </div>
+
+    <script>
+        const faqData = [
+            { id: "Q01", lessonIndex: 1, lessonName: "Discussing the Four Common Approaches", question: "Which law enforcement approach is considered the 'easiest' to implement?", answer: "Standard Policing is considered the easiest by 83% of trainees because it is reactive, relies on foundational skills like patrolling and raids, and requires less complex analytical coordination." },
+            { id: "Q02", lessonIndex: 1, lessonName: "Importance of Environmental Factors", question: "What are the key categories of environmental factors identified in wildlife crime?", answer: "There are four categories: Economic (poverty/survival), Social & Cultural (peer pressure/tradition), Geographical (proximity to forests/routes), and Perceptual (lack of legal awareness or excuses like paying school fees)" },
+            { id: "Q03", lessonIndex: 1, lessonName: "Analysis of Snare Data", question: "Does a decrease in the number of found snares prove that poaching is going down?", answer: "Not necessarily. Snare counts are often proportional to patrol effort; fewer snares may be found simply because fewer kilometers were patrolled" },
+            { id: "Q04", lessonIndex: 1, lessonName: "Analysis of Snare Data", question: "What does the 'age' of snares reveal about poachers' behavior?", answer: "A shift from 'old' to 'young' (newly set) snares indicates that hunters are actively monitoring the area and replacing traps as fast as they are removed" },
+            { id: "Q05", lessonIndex: 1, lessonName: "Problem-Solving Models", question: "Which models are most popular for diagnosing wildlife crime before taking action?", answer: "The SARA (Scan, Analysis, Response, Assessment) model and the CHEERS diagnostic filter are the primary frameworks used for deep-rooted problem solving" },
+            { id: "Q06", lessonIndex: 1, lessonName: "Problem-Solving Models", question: "What are the six components of the CHEERS model?", answer: "CHEERS stands for: Community, Harmful, Expectation, Event, Recurring, and Similarity" },
+            { id: "Q07", lessonIndex: 2, lessonName: "Identifying Environmental Factors", question: "Why does poaching concentrate in specific 'hot spots' within protected areas?", answer: "Due to a 'perfect storm' of high biodiversity, ease of access (flat terrain/near villages), natural movement corridors (ridges/valleys), and essential resources like salt licks or water" },
+            { id: "Q08", lessonIndex: 2, lessonName: "The Three Mechanisms", question: "Which mechanism is considered the 'gold standard' for sustainable behavioral change?", answer: "Motivation-based intervention is the gold standard because it addresses the 'root of the problem' by providing alternative livelihoods or changing social incentives" },
+            { id: "Q09", lessonIndex: 2, lessonName: "Analysing the Urban Example", question: "What environmental attractors make a city location ideal for illegal wildlife markets?", answer: "Logistical connectivity (transport hubs), proximity to high-net-worth targets (luxury hotels), high foot traffic for camouflage, and peripheral sites for easier transit" },
+            { id: "Q10", lessonIndex: 2, lessonName: "Your Thoughts on Crime Scripting", question: "What is the primary value of using 'Crime Scripting'?", answer: "It breaks a crime into a chronological sequence, helping analysts identify intervention points in the preparation and aftermath stages that are typically overlooked" },
+            { id: "Q11", lessonIndex: 3, lessonName: "Offender Motivations", question: "Is wildlife crime always driven by a need for money?", answer: "No. While economic factors are significant, 66% of trainees noted Psychological and Recreational motives (thrill of the hunt/addiction) and 50% mentioned Social Status" },
+            { id: "Q12", lessonIndex: 3, lessonName: "Your Views on Deterrence Theory", question: "Which is more important for deterrence: the severity of the penalty or the certainty of being caught?", answer: "Certainty of being caught is the primary deterrent (96% agreement), but it must be paired with the certainty of actual legal consequences/sentencing" },
+            { id: "Q13", lessonIndex: 1, lessonName: "Applying the 80/20 Rule", question: "In the illegal bird trade, which 20% of factors cause 80% of the volume?", answer: "The primary 'vital few' are public transportation (buses/vans) and high-stakes singing competitions with massive prize pools" },
+            { id: "Q14", lessonIndex: 4, lessonName: "Interpreting the Threat Map", question: "How does the decline of 'prey species' affect apex predators like tigers?", answer: "It creates a 'deadly double-bind': snares kill tigers directly, and the depletion of prey (deer/boar) leads to trophic collapse, emptying the forest of their food source" },
+            { id: "Q15", lessonIndex: 4, lessonName: "Interpreting the Threat Map", question: "What is the 'Urban Pull' factor in wildlife crime?", answer: "It is the demand from city consumers and restaurants that acts as 'investors,' providing the financing for local hunters to conduct poaching trips" },
+            { id: "Q16", lessonIndex: 4, lessonName: "Your Thoughts on Displacement", question: "What is the most common way wildlife criminals adapt to enforcement pressure?", answer: "Tactical Displacement (44%), which includes moving to private digital platforms (TikTok/Zalo), using sophisticated concealment, or hiring lawyers to challenge court cases" },
+            { id: "Q17", lessonIndex: 4, lessonName: "Your Thoughts on Displacement", question: "Does a forced pause like COVID-19 count as displacement?", answer: "Yes. It is considered Temporal Displacement. Criminals do not quit; they wait for a 'window of opportunity' and stockpiling goods for a post-crisis surge" },
+            { id: "Q18", lessonIndex: 5, lessonName: "Strategic Theory and Targets", question: "Which models are used to identify why a specific species is a preferred target?", answer: "The CRAVED (Concealable, Removable, Available, Valuable, Enjoyable, Disposable) and VIVA (Value, Inertia, Visibility, Access) models" },
+            { id: "Q19", lessonIndex: 5, lessonName: "Hypothesis Development", question: "Why is structured hypothesis development preferred over 'detective intuition'?", answer: "It serves as a 'safety harness' to kill cognitive bias, forces the identification of information gaps, and creates a logical chain of evidence defensible to leadership" },
+            { id: "Q20", lessonIndex: 5, lessonName: "Inferences from Analysis", question: "What did the analysis of a 50-market dataset reveal about wildlife crime?", answer: "It illustrated the 80/20 rule: 74% of violations were concentrated in just 20% of markets, and 60% of volume was found within a single postcode (N1)" },
+            { id: "Q21", lessonIndex: 5, lessonName: "Zoonotic Disease Research", question: "Why is the risk of virus spillover higher 'downstream' in the trade chain?", answer: "While source animals often test negative, the stress of captivity, dehydration, and multi-species clustering during transit creates a 'biological reactor' for viral shedding" },
+            { id: "Q22", lessonIndex: 4, lessonName: "Legal and Judicial Adaptation", question: "Can hiring high-end lawyers and opting for a trial be classified as displacement?", answer: "Yes. This is Tactical Displacement where defendants use legal sophistication to pressure the judicial system and neutralize the threat of harsher penalties" }
+        ];
+
+        // 1. Lấy tham số URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const targetParam = urlParams.get('target_lesson');
+        const targetLesson = targetParam ? parseInt(targetParam) : 999;
+
+        // 2. Lọc dữ liệu
+        const filteredData = faqData.filter(item => item.lessonIndex <= targetLesson);
+
+        const faqListContainer = document.getElementById('faqList');
+        const searchInput = document.getElementById('searchInput');
+
+        // 3. Hàm render
+        function renderFAQ(data) {
+            faqListContainer.innerHTML = '';
+            
+            if (data.length === 0) {
+                faqListContainer.innerHTML = '<div class="no-results">No questions found matching your criteria.</div>';
+                return;
+            }
+
+            data.forEach(item => {
+                const faqItem = document.createElement('div');
+                faqItem.className = 'faq-item';
+                faqItem.innerHTML = `
+                    <button class="faq-question">${item.question}</button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            <span class="lesson-badge">Lesson ${item.lessonIndex}: ${item.lessonName}</span>
+                            <br>
+                            ${item.answer}
+                        </div>
+                    </div>
+                `;
+                faqListContainer.appendChild(faqItem);
+            });
+        }
+
+        // 4. Xử lý Accordion (Dùng Event Delegation - Gắn 1 lần duy nhất)
+        faqListContainer.addEventListener('click', function(e) {
+            if (e.target.classList.contains('faq-question')) {
+                const questionBtn = e.target;
+                const item = questionBtn.parentElement;
+                const answer = questionBtn.nextElementSibling;
+                const isActive = item.classList.contains('active');
+
+                // Đóng tất cả các cái khác
+                document.querySelectorAll('.faq-item').forEach(otherItem => {
+                    otherItem.classList.remove('active');
+                    otherItem.querySelector('.faq-answer').style.maxHeight = null;
+                });
+
+                // Nếu cái vừa bấm chưa active thì mở nó ra
+                if (!isActive) {
+                    item.classList.add('active');
+                    answer.style.maxHeight = answer.scrollHeight + "px";
+                }
+            }
+        });
+
+        // 5. Xử lý tìm kiếm
+        searchInput.addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase().trim();
+            const searchedData = filteredData.filter(item => 
+                item.question.toLowerCase().includes(searchTerm) || 
+                item.answer.toLowerCase().includes(searchTerm)
+            );
+            renderFAQ(searchedData);
+        });
+
+        // Khởi tạo lần đầu
+        renderFAQ(filteredData);
+    </script>
+</body>
+</html>
